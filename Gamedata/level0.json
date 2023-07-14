@@ -1,0 +1,24 @@
+{
+    "levelId": 0,
+    "playerStartPosition": [3, 0],
+
+    "holePositions":[[5,5]],
+    "wallPositions":[[2,3]],
+    "gravelPositions":[[1,1]],
+
+    "enemies":
+    {
+        "enemy1":{
+            "type":"enemy",
+            "position":[1,2],
+            "direction":"right",
+            "speed":1
+        },
+        "enemy2":{
+            "type":"enemy",
+            "position":[1,4],
+            "direction":"right",
+            "speed":1
+        }
+    }
+}
