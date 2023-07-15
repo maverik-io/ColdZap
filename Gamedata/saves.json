@@ -1,5 +1,7 @@
 {
-    "Joe" : 3,
-    "Bob" : 2,
-    "Sally" : 1
+
+        "levelId" : 1,
+        "score" : 100,
+        "lives" : 5
+
 }
