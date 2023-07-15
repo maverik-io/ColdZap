@@ -18,7 +18,6 @@ Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", 60)
 Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", 20)
 
 def main():
-
 	global quit
 
 	def event_handler():
@@ -52,6 +51,8 @@ def main():
 	sys.exit()
 
 def menu():
+	music = pg.mixer.music.load("assets/audio/menu.mp3")
+	pg.mixer.music.play(-1)
 	global quit
 
 	def event_handler():
