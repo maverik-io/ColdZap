@@ -6,13 +6,9 @@ from pygame.sprite import AbstractGroup
 class Player():
 
 	def __init__(self,x = 3,y = 8):
-		self.image = pg.Surface((50,50))
-		self.image.set_colorkey((0,0,0))
-		
-		pg.draw.circle(self.image,(0, 141, 159),(25,25),15)
-		self.rect = self.image.get_rect(topleft = (x*50,y*50))
+		self.image = pg.image.load("assets/images/player.png")
 		self.pos = Vector2(x,y)
-
+		self.rect = self.image.get_rect(center = self.pos*50 + Vector2(25,25))
 		self.moving = False
 		self.vel = Vector2(0,0)
 		self.target = self.pos
@@ -32,7 +28,6 @@ class Player():
 			elif direction == "right":
 				if self.pos.x < 6:
 					self.targets.append([(self.targets[0][0] + Vector2(1,0)) if any(self.targets) else self.target + Vector2(1,0),Vector2(1,0)])
-		print(self.targets)
 
 
 
@@ -51,7 +46,9 @@ class Player():
 					self.vel = self.target[1] * 0.03
 			self.vel = Vector2(0,0)
 			self.tgt = self.pos
-		self.rect.topleft = self.pos*50
+		self.rect.center = self.pos*50 + Vector2(25,25)
+		#draw a dot at the target
+		pg.draw.circle(surface,(255,0,0),self.target*50 + Vector2(25,25),5)
 		surface.blit(self.image,self.rect)
 
 
@@ -74,25 +71,25 @@ class TxtButton():
 		return action
 
 class Enemy():
-	def __init__(self,type:str,posA:Vector2,posB:Vector2,speed:int):
+	def __init__(self,type:str,positions:list[list[int,int]],speed:int):
 		self.type = type
-		self.posA = posA
-		self.posB = posB
+		self.positions = positions
 		self.speed = speed
 
-		self.image = pg.Surface((50,50))
-		self.image.set_colorkey((0,0,0))
-		pg.draw.circle(self.image,(255,0,0),(25,25),15)
-		self.rect = self.image.get_rect(topleft = self.posA*50)
-		self.pos = self.posA
-		self.tgt = self.posB
+		self.image = pg.image.load(f"assets/images/{self.type}.png")
+		self.rect = self.image.get_rect()
 
-	def update(self,surface):
-		self.vel = (self.tgt-self.pos).normalize() * self.speed * 0.03
-		self.pos = self.pos + self.vel
-		if (self.pos - self.tgt).length() < 0.05:
-			self.pos = self.tgt
-			self.tgt = self.posA if self.tgt == self.posB else self.posB
+		self.counter = 0
 		
-		self.rect.topleft = self.pos*50
+		self.pos = Vector2(self.positions[self.counter])
+		self.tgt = Vector2(self.positions[1])
+
+	#moves the enemy from one position (using interpolation like the player class) to another cycling through the positions list. also draws the sprite
+	def update(self,surface):
+		if (self.tgt - self.pos).length() < 0.05:
+			self.pos = self.tgt
+			self.positions.append(self.positions.pop(0))
+			self.tgt = Vector2(self.positions[0])
+		self.pos  = self.pos + (self.tgt - self.pos) * 0.3
+		self.rect.center = self.pos*50 + Vector2(25,25)
 		surface.blit(self.image,self.rect)

@@ -18,9 +18,19 @@ clock = pg.time.Clock()
 Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", 60)
 Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", 20)
 
-music = pg.mixer.music.load("assets/audio/menu.mp3")
-pg.mixer.music.play(-1)
-
+with open('settings.json') as f:
+	settings = json.load(f)
+	if settings["music"] == 0:
+		music_playing = False
+	elif settings["music"] == 1:
+		music_playing = True
+		pg.mixer.music.load("assets/audio/menu.mp3")
+	elif settings["music"] == 2:
+		music_playing = True
+		pg.mixer.music.load("assets/audio/Supert.mp3")
+if music_playing:
+	pg.mixer.music.play(-1)
+	
 def main(saved = False):
 
 	if saved:
@@ -37,7 +47,7 @@ def main(saved = False):
 	with open(f"Gamedata/Levels/Level{level}.json") as f:level_data = json.load(f)
 	enemies = []
 	for i in level_data['enemies']:
-		enemies.append(cl.Enemy(level_data['enemies'][i]['type'],Vector2(level_data['enemies'][i]['posA']),Vector2(level_data['enemies'][i]['posB']),level_data['enemies'][i]['speed']))
+		enemies.append(cl.Enemy(level_data['enemies'][i]['type'],(level_data['enemies'][i]['positions']),level_data['enemies'][i]['speed']))
 
 
 	global quit
@@ -82,6 +92,14 @@ def main(saved = False):
 	sys.exit()
 
 def menu():
+	def paused():
+		back_button = cl.TxtButton(175,200,"Resume",(0,0,0),Comfortaa_small)
+		while True:
+			df.draw_bg(screen)
+			df.draw_txt(screen,"Paused",175,100,(0,0,0),Comfortaa)
+			if back_button.update(screen,pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0,0)):
+				df.fade_to(screen,(0,0,0),0.15)
+				break
 
 	global quit
 
