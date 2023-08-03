@@ -4,7 +4,7 @@ from pygame.math import Vector2
 
 scale = 1.7
 
-def draw_bg(surface,walls):
+def draw_bg(surface):
 
     surface.fill("#baf9ff")
     pg.draw.rect(surface, "#a4eeff", (0, 0, 350 * scale*scale, 450 * scale), 5)

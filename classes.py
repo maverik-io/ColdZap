@@ -3,6 +3,7 @@ from pygame.math import Vector2
 
 Bulletlist = []
 Enemylist = []
+Walllist = []
 
 PlayerPos = Vector2(3, 8)
 
@@ -14,8 +15,35 @@ def displayBullets(screen):
             print("removed")
             Bulletlist.remove(i)
 
+def update_enemies(screen):
+    for i in Enemylist:
+        i.update(screen)
+
+def update_walls(screen):
+    for i in Walllist:
+        i.update(screen)
 
 
+
+class Wall:
+    def __init__(self,pos):
+        x,y = pos
+        self.image = pg.image.load(f"assets/images/{scale}x/wall.png")
+        self.pos = Vector2(x, y)
+        self.rect = self.image.get_rect(center=self.pos * 50*scale + Vector2(25, 25)*scale)
+        self.mask = pg.mask.from_surface(self.image)
+        Walllist.append(self)
+
+    def update(self, surface):
+        #set the color of the wall to red if a bullet hits it
+        for i in Bulletlist:
+            if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*scale), int(i.pos.y - self.pos.y * 50*scale))):
+                Bulletlist.remove(i)
+
+        surface.blit(self.image, self.rect)
+        
+
+    
 # player sprite that moves uniformly in steps from one cell to another
 class Player:
     def __init__(self, x=3, y=8,health=5):
@@ -30,6 +58,7 @@ class Player:
         PlayerPos = self.pos
         self.mask = pg.mask.from_surface(self.image)
         self.health = health
+        self.counter = 0
 
     def move(self, direction):
         if len(self.targets) < 2:
@@ -99,11 +128,16 @@ class Player:
         surface.blit(self.image, self.rect)
 
     def shoot_stuff(self):
-        for enemy in Enemylist:
+        try:
+            if self.counter > 10:
+                for enemy in Enemylist:
 
-            if self.pos.x == enemy.tgt.x or self.pos.y == enemy.tgt.y:
-                Bulletlist.append(Bullet(self.pos, (enemy.tgt - self.pos).normalize() * 2, "blue"))
-                print("shot")
+                    if (self.pos.x == enemy.tgt.x or self.pos.y == enemy.tgt.y):
+                        Bulletlist.append(Bullet(self.pos, (enemy.tgt - self.pos).normalize() * 20, "blue"))
+                        self.counter = 0
+            self.counter += 1
+        except:
+            pass
 
     def collision(self):
         for i in Bulletlist:
@@ -137,14 +171,14 @@ class Bullet:
         self.type = type
         self.image = pg.image.load(f"assets/images/{scale}x/{type}-bullet.png")
         self.pos = pos * 50*scale + Vector2(25, 25)*scale
-        self.vel = vel
+        self.vel = vel * scale
         self.dir = vel.angle_to(Vector2(0, -1))
         self.rect = self.image.get_rect(center=self.pos * 50*scale + Vector2(25, 25)*scale)
         self.mask = pg.mask.from_surface(self.image)
 
     def update(self, surface):
         tempimage = pg.transform.rotate(self.image, self.dir)
-        self.pos += self.vel if self.type == "red" else self.vel * 5
+        self.pos += self.vel 
         self.rect.center = self.pos
         surface.blit(tempimage, self.rect)
 
@@ -153,19 +187,23 @@ class Bullet:
             return True
 
 
+
 class Enemy:
-    def __init__(self, type: str, positions: list[list[int, int]], speed: int):
+    def __init__(self, type: str, positions: list[list[int, int]], ):
         self.type = type
         self.positions = positions + positions[::-1]
-        self.speed = speed
 
         self.image = pg.image.load(f"assets/images/{scale}x/{self.type}.png")
         self.rect = self.image.get_rect()
 
         self.counter = 0
 
+        self.mask = pg.mask.from_surface(self.image)
+
         self.pos = Vector2(self.positions[self.counter])
         self.tgt = Vector2(self.positions[1])
+
+        self.health = 5
 
         Enemylist.append(self)
 
@@ -180,7 +218,20 @@ class Enemy:
             self.pos = self.tgt
             self.positions.append(self.positions.pop(0))
             self.tgt = Vector2(self.positions[0])
-        self.pos = self.pos + (self.tgt - self.pos) * 0.2
+        self.pos = self.pos + (self.tgt - self.pos) * 0.1
         self.rect.center = self.pos * 50*scale + Vector2(25, 25)*scale
         surface.blit(self.image, self.rect)
+        self.collision()
+        if self.health <= 0:
+            try:
+                Enemylist.remove(self)
+            except Exception as e:
+                print(e)
+                print(Enemylist)
 
+    def collision(self):
+        for i in Bulletlist:
+            if i.type == "blue":
+                if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*scale), int(i.pos.y - self.pos.y * 50*scale))):
+                    Bulletlist.remove(i)
+                    self.health -= 1

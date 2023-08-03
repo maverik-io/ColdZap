@@ -34,6 +34,11 @@ if music_playing:
 
 def main(saved=False):
 
+    cl.Bulletlist.clear()
+    cl.Enemylist.clear()
+    cl.Walllist.clear()
+
+    win = False
 
 
     if saved:
@@ -43,7 +48,7 @@ def main(saved=False):
             score = save["score"]
             lives = save["lives"]
     else:
-        level = 0
+        level = 1
         score = 0
         lives = 5
         
@@ -51,19 +56,17 @@ def main(saved=False):
 
     with open(f"Gamedata/Levels/Level{level}.json") as f:
         level_data = json.load(f)
-    enemies = []
     for i in level_data["enemies"]:
-        enemies.append(
+
             cl.Enemy(
                 level_data["enemies"][i]["type"],
                 level_data["enemies"][i]["positions"],
-                level_data["enemies"][i]["speed"],
             )
-        )
 
-    walls = []
     for i in level_data["wallPositions"]:
-        walls.append(i)
+        cl.Wall(i)
+
+
     player = cl.Player(startpos[0], startpos[1],lives)
     global quit
 
@@ -89,12 +92,12 @@ def main(saved=False):
             pg.event.get(pg.QUIT) or event_handler()
         )  # quit if window is closed or event_handler returns True
 
-        df.draw_bg(screen,walls)  # draw background
+        df.draw_bg(screen)  # draw background
         cl.displayBullets(screen)
         player.update(screen)  # update player
-        for enemy in enemies:
-            enemy.update(screen)  # update enemies
-          # update bullets
+        cl.update_enemies(screen)#update enemies
+          # update bullets\
+        cl.update_walls(screen)
 
         df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
 
