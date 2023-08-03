@@ -90,11 +90,11 @@ def main(saved=False):
         )  # quit if window is closed or event_handler returns True
 
         df.draw_bg(screen,walls)  # draw background
-
+        cl.displayBullets(screen)
         player.update(screen)  # update player
         for enemy in enemies:
             enemy.update(screen)  # update enemies
-        cl.displayBullets(screen)  # update bullets
+          # update bullets
 
         df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
 

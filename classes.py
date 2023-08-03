@@ -20,7 +20,7 @@ def displayBullets(screen):
 class Player:
     def __init__(self, x=3, y=8,health=5):
         global PlayerPos
-        self.image = pg.image.load("assets/images/player.png")
+        self.image = pg.image.load(f"assets/images/{scale}x/player.png")
         self.pos = Vector2(x, y)
         self.rect = self.image.get_rect(center=self.pos * 50*scale + Vector2(25, 25)*scale)
         self.moving = False
@@ -93,16 +93,25 @@ class Player:
             self.tgt = self.pos
         self.rect.center = self.pos * 50*scale + Vector2(25, 25)*scale
         self.collision()
+        self.shoot_stuff()
         # draw a dot at the target
         pg.draw.circle(surface, (255, 0, 0), self.target * 50*scale + Vector2(25, 25)*scale, 5)
         surface.blit(self.image, self.rect)
 
+    def shoot_stuff(self):
+        for enemy in Enemylist:
+
+            if self.pos.x == enemy.tgt.x or self.pos.y == enemy.tgt.y:
+                Bulletlist.append(Bullet(self.pos, (enemy.tgt - self.pos).normalize() * 2, "blue"))
+                print("shot")
+
     def collision(self):
         for i in Bulletlist:
-            if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*scale), int(i.pos.y - self.pos.y * 50*scale))):
-                print("hit")
-                Bulletlist.remove(i)
-                self.health -= 1
+            if i.type == "red":
+                if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*scale), int(i.pos.y - self.pos.y * 50*scale))):
+                    print("hit")
+                    Bulletlist.remove(i)
+                    self.health -= 1
 
 class TxtButton:
     def __init__(self, x, y, txt, color, font):
@@ -126,7 +135,7 @@ class TxtButton:
 class Bullet:
     def __init__(self, pos, vel, type="red"):
         self.type = type
-        self.image = pg.image.load(f"assets/images/{type}-bullet.png")
+        self.image = pg.image.load(f"assets/images/{scale}x/{type}-bullet.png")
         self.pos = pos * 50*scale + Vector2(25, 25)*scale
         self.vel = vel
         self.dir = vel.angle_to(Vector2(0, -1))
@@ -135,7 +144,7 @@ class Bullet:
 
     def update(self, surface):
         tempimage = pg.transform.rotate(self.image, self.dir)
-        self.pos += self.vel
+        self.pos += self.vel if self.type == "red" else self.vel * 5
         self.rect.center = self.pos
         surface.blit(tempimage, self.rect)
 
@@ -150,13 +159,15 @@ class Enemy:
         self.positions = positions + positions[::-1]
         self.speed = speed
 
-        self.image = pg.image.load(f"assets/images/{self.type}.png")
+        self.image = pg.image.load(f"assets/images/{scale}x/{self.type}.png")
         self.rect = self.image.get_rect()
 
         self.counter = 0
 
         self.pos = Vector2(self.positions[self.counter])
         self.tgt = Vector2(self.positions[1])
+
+        Enemylist.append(self)
 
     def update(self, surface):
         if self.counter > 120:

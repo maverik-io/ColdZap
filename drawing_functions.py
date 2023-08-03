@@ -11,12 +11,6 @@ def draw_bg(surface,walls):
     for x, y in [(i, j) for i in range(7) for j in range(9) if (i + j) % 2]:
         pg.draw.rect(surface, "#a4eeff", (50 * scale * x, 50 * scale * y, 50*scale, 50*scale))
 
-    wall_img = pg.image.load("assets/images/wall.png")
-    
-
-    for i in walls:
-        wall_rect = wall_img.get_rect(center = (i[0]*50*scale+25*scale,i[1]*50*scale+25*scale))
-        surface.blit(wall_img,wall_rect)
 
 
 
@@ -49,7 +43,7 @@ def fade_to(surface, color, duration):
 def draw_ui(surface, font: pg.font.Font, level, score, lives):
     score = "Score: " + str(score)
     level = "Level: " + str(level)
-
+    pg.draw.rect(surface, '#baf9ff', (0, 450*scale, 350*scale, 50*scale))
     draw_txt(surface, str(level), 210*scale, 465*scale, (0, 0, 0), font, "")
     draw_txt(surface, str(score), 210*scale, 490*scale, (0, 0, 0), font, "")
 
