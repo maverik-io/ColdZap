@@ -6,17 +6,17 @@ import json
 import drawing_functions as df
 import classes as cl
 
-
+scale = 1.7
 pg.init()
-screen = pg.display.set_mode((350, 500))
+screen = pg.display.set_mode((int(350*scale),int(500*scale)))
 
 quit = False
-player = cl.Player()
+
 clock = pg.time.Clock()
 
 
-Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", 60)
-Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", 20)
+Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", int(60 * scale))
+Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", int(20 * scale))
 
 with open("GameData/settings.json") as f:
     settings = json.load(f)
@@ -33,6 +33,9 @@ if music_playing:
 
 
 def main(saved=False):
+
+
+
     if saved:
         with open("Gamedata/saves.json") as f:
             save = json.load(f)
@@ -43,6 +46,8 @@ def main(saved=False):
         level = 0
         score = 0
         lives = 5
+        
+    startpos = (3, 8)
 
     with open(f"Gamedata/Levels/Level{level}.json") as f:
         level_data = json.load(f)
@@ -51,11 +56,15 @@ def main(saved=False):
         enemies.append(
             cl.Enemy(
                 level_data["enemies"][i]["type"],
-                (level_data["enemies"][i]["positions"]),
+                level_data["enemies"][i]["positions"],
                 level_data["enemies"][i]["speed"],
             )
         )
 
+    walls = []
+    for i in level_data["wallPositions"]:
+        walls.append(i)
+    player = cl.Player(startpos[0], startpos[1],lives)
     global quit
 
     def event_handler():
@@ -72,7 +81,7 @@ def main(saved=False):
                 elif event.key == pg.K_ESCAPE or event.key == pg.K_q:
                     return True
 
-    back_button = cl.TxtButton(20, 480, "<=", (0, 0, 0), Comfortaa_small)
+    back_button = cl.TxtButton(20 * scale, 480*scale, "<=", (0, 0, 0), Comfortaa_small)
 
     while not quit:
         clock.tick(60)
@@ -80,18 +89,18 @@ def main(saved=False):
             pg.event.get(pg.QUIT) or event_handler()
         )  # quit if window is closed or event_handler returns True
 
-        df.draw_bg(screen)  # draw background
+        df.draw_bg(screen,walls)  # draw background
 
         player.update(screen)  # update player
         for enemy in enemies:
             enemy.update(screen)  # update enemies
         cl.displayBullets(screen)  # update bullets
 
-        df.draw_ui(screen, Comfortaa_small, level, score, lives)  # draw ui
+        df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
 
         if back_button.update(
             screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
-        ):
+        ) or player.health == 0:
             df.fade_to(screen, (0, 0, 0), 0.15)
             return menu
 
@@ -102,16 +111,7 @@ def main(saved=False):
 
 
 def menu():
-    def paused():
-        back_button = cl.TxtButton(175, 200, "Resume", (0, 0, 0), Comfortaa_small)
-        while True:
-            df.draw_bg(screen)
-            df.draw_txt(screen, "Paused", 175, 100, (0, 0, 0), Comfortaa)
-            if back_button.update(
-                screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
-            ):
-                df.fade_to(screen, (0, 0, 0), 0.15)
-                break
+
 
     global quit
 
@@ -123,10 +123,10 @@ def menu():
                 elif event.key == pg.K_RETURN:
                     return False
 
-    new_game = cl.TxtButton(175, 200, "New Game", (0, 0, 0), Comfortaa_small)
-    load_game = cl.TxtButton(175, 250, "Load Game", (0, 0, 0), Comfortaa_small)
-    view_highscore = cl.TxtButton(175, 300, "Highscores", (0, 0, 0), Comfortaa_small)
-    quit_game = cl.TxtButton(175, 350, "Quit", (0, 0, 0), Comfortaa_small)
+    new_game = cl.TxtButton(175 * scale, 200 * scale, "New Game", (0, 0, 0), Comfortaa_small)
+    load_game = cl.TxtButton(175 * scale, 250 * scale, "Load Game", (0, 0, 0), Comfortaa_small)
+    view_highscore = cl.TxtButton(175 * scale, 300 * scale, "Highscores", (0, 0, 0), Comfortaa_small)
+    quit_game = cl.TxtButton(175 * scale, 350 * scale, "Quit", (0, 0, 0), Comfortaa_small)
 
     while not quit:
         clock.tick(60)
@@ -140,7 +140,7 @@ def menu():
             pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
         )  # get mouse position if mouse is pressed, else (0,0)
 
-        df.draw_txt(screen, "ColdZap", 175, 100, (0, 0, 0), Comfortaa)
+        df.draw_txt(screen, "ColdZap", 175*scale, 100*scale, (0, 0, 0), Comfortaa)
 
         if quit_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
