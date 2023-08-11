@@ -6,31 +6,45 @@ import json
 import drawing_functions as df
 import classes as cl
 
-scale = 1.7
+SCALE = 1.7
 pg.init()
-screen = pg.display.set_mode((int(350*scale),int(500*scale)))
+screen = pg.display.set_mode((int(350*SCALE),int(500*SCALE)))
 
 quit = False
 
 clock = pg.time.Clock()
 
 
-Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", int(60 * scale))
-Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", int(20 * scale))
+Comfortaa = pg.font.Font("assets/fonts/Comfortaa.ttf", int(60 * SCALE))
+Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", int(20 * SCALE))
 
-with open("GameData/settings.json") as f:
-    settings = json.load(f)
-    if settings["music"] == 0:
-        music_playing = False
-    elif settings["music"] == 1:
-        music_playing = True
-        pg.mixer.music.load("assets/audio/menu.mp3")
-    elif settings["music"] == 2:
-        music_playing = True
-        pg.mixer.music.load("assets/audio/Supert.mp3")
-if music_playing:
-    pg.mixer.music.play(-1)
+music_playing = False
+current_song = "Nothing"
 
+intro_sound = pg.mixer.Sound("assets/audio/intro.wav")
+
+
+
+def load_settings():
+    global music_playing, current_song
+
+    with open("GameData/settings.json") as f:
+        settings = json.load(f)
+        if settings["music"] == 0:
+            music_playing = False
+            current_song = "Nothing"
+        elif settings["music"] == 1:
+            music_playing = True
+            current_song = "Astra"
+            pg.mixer.music.load("assets/audio/menu.wav")
+        elif settings["music"] == 2:
+            music_playing = True
+            current_song = "Supert"
+            pg.mixer.music.load("assets/audio/Supert.wav")
+    if music_playing:
+        pg.mixer.music.play(-1)
+
+load_settings()
 
 def main(saved=False):
 
@@ -38,7 +52,12 @@ def main(saved=False):
     cl.Enemylist.clear()
     cl.Walllist.clear()
 
-    win = False
+
+    def wincheck():
+        if not cl.Enemylist:
+            return True
+        else:
+            return False
 
 
     if saved:
@@ -48,7 +67,7 @@ def main(saved=False):
             score = save["score"]
             lives = save["lives"]
     else:
-        level = 1
+        level = 2
         score = 0
         lives = 5
         
@@ -84,8 +103,10 @@ def main(saved=False):
                 elif event.key == pg.K_ESCAPE or event.key == pg.K_q:
                     return True
 
-    back_button = cl.TxtButton(20 * scale, 480*scale, "<=", (0, 0, 0), Comfortaa_small)
+    back_button = cl.TxtButton(20 * SCALE, 480*SCALE, "<=", (0, 0, 0), Comfortaa_small)
 
+
+    intro_sound.play()
     while not quit:
         clock.tick(60)
         quit = (
@@ -95,17 +116,21 @@ def main(saved=False):
         df.draw_bg(screen)  # draw background
         cl.displayBullets(screen)
         player.update(screen)  # update player
+
         cl.update_enemies(screen)#update enemies
           # update bullets\
         cl.update_walls(screen)
 
         df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
 
+        #if the player is hit flas the screen red
+
+
         if back_button.update(
             screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
         ) or player.health == 0:
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return menu
+            return menu, ()
 
         pg.display.flip()
 
@@ -126,10 +151,11 @@ def menu():
                 elif event.key == pg.K_RETURN:
                     return False
 
-    new_game = cl.TxtButton(175 * scale, 200 * scale, "New Game", (0, 0, 0), Comfortaa_small)
-    load_game = cl.TxtButton(175 * scale, 250 * scale, "Load Game", (0, 0, 0), Comfortaa_small)
-    view_highscore = cl.TxtButton(175 * scale, 300 * scale, "Highscores", (0, 0, 0), Comfortaa_small)
-    quit_game = cl.TxtButton(175 * scale, 350 * scale, "Quit", (0, 0, 0), Comfortaa_small)
+    new_game = cl.TxtButton(175 * SCALE, 200 * SCALE, "New Game", (0, 0, 0), Comfortaa_small)
+    load_game = cl.TxtButton(175 * SCALE, 250 * SCALE, "Load Game", (0, 0, 0), Comfortaa_small)
+    view_highscore = cl.TxtButton(175 * SCALE, 300 * SCALE, "Highscores", (0, 0, 0), Comfortaa_small)
+    settings_button = cl.TxtButton(175 * SCALE, 350 * SCALE, "Settings", (0, 0, 0), Comfortaa_small)
+    quit_game = cl.TxtButton(175 * SCALE, 400 * SCALE, "Quit", (0, 0, 0), Comfortaa_small)
 
     while not quit:
         clock.tick(60)
@@ -143,20 +169,23 @@ def menu():
             pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
         )  # get mouse position if mouse is pressed, else (0,0)
 
-        df.draw_txt(screen, "ColdZap", 175*scale, 100*scale, (0, 0, 0), Comfortaa)
+        df.draw_txt(screen, "ColdZap", 175*SCALE, 100*SCALE, (0, 0, 0), Comfortaa)
 
         if quit_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
             break
         if load_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return loadscreen
+            return loadscreen, ()
         if view_highscore.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return highscore
+            return highscore, ()
+        if settings_button.update(screen, mouse_pos):
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return settings, ()
         if new_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return main
+            return main, (False,)
 
         pg.display.flip()
 
@@ -165,7 +194,7 @@ def menu():
 
 
 def loadscreen():
-    return main(True)
+    return main, (True,)
 
 
 def highscore():
@@ -175,8 +204,73 @@ def highscore():
         print(highscore)
     return menu
 
+def settings():
+
+    global quit, current_song
+
+    def event_handler():
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE or event.key == pg.K_q:
+                    return True
+                elif event.key == pg.K_RETURN:
+                    return False
+
+    music_button = cl.TxtButton(175 * SCALE, 100 * SCALE, f"Music : {current_song}", (0, 0, 0), Comfortaa_small)
+    menu_button = cl.TxtButton(175 * SCALE, 150 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small)
+
+
+    while not quit:
+        clock.tick(60)
+
+        quit = (
+            pg.event.get(pg.QUIT) or event_handler()
+        )  # quit if window is closed or event_handler returns True
+
+        df.draw_menu_bg(screen)  # draw background
+        mouse_pos = (
+            pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
+        )  # get mouse position if mouse is pressed, else (0,0)
+
+        if music_button.update(screen, mouse_pos):
+            #cycle through songs
+            if current_song == "Nothing":
+                current_song = "Astra"
+                with open("GameData/settings.json") as f:
+                    settings = json.load(f)
+                    settings["music"] = 1
+                with open("GameData/settings.json", "w") as f:
+                    json.dump(settings, f)
+            elif current_song == 'Astra':
+                current_song = "Supert"
+                with open("GameData/settings.json") as f:
+                    settings = json.load(f)
+                    settings["music"] = 2
+                with open("GameData/settings.json", "w") as f:
+                    json.dump(settings, f)
+            elif current_song == "Supert":
+                current_song = "Nothing"
+                with open("GameData/settings.json") as f:
+                    settings = json.load(f)
+                    settings["music"] = 0
+                with open("GameData/settings.json", "w") as f:
+                    json.dump(settings, f)
+
+            load_settings()
+            
+
+
+
+        pg.display.flip()
+
+    pg.quit()
+    sys.exit()
+
+    
 
 if __name__ == "__main__":
     active_screen = menu
+    args = ()
+    print(type(args))
     while True:
-        active_screen = active_screen()
+        active_screen,args = active_screen(*args)
