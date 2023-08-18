@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Run Main.py",
             "type": "python",
             "request": "launch",
             "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Run levelCreate.py",
+            "type": "python",
+            "request": "launch",
+            "program": "levelCreate.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

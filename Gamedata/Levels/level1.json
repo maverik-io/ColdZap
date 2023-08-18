@@ -2,9 +2,8 @@
     "levelId": 1,
     "playerStartPosition": [3, 0],
 
-    "holePositions":[[5,5]],
+    "pitPositions":[[5,5]],
     "wallPositions":[[2,3]],
-    "gravelPositions":[[1,1]],
 
     "enemies":
     {
