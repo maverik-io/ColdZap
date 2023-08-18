@@ -41,9 +41,11 @@ def load_settings():
         elif settings["music"] == 2:
             music_playing = True
             current_song = "Supert"
-            pg.mixer.music.load("assets/audio/Supert.wav")
+            pg.mixer.music.load("assets/audio/Supert.mp3")
     if music_playing:
         pg.mixer.music.play(-1)
+    else:
+        pg.mixer.music.stop()
 load_settings()
 
 #---SCREEN-FUNCTIONS---------------------------
@@ -53,7 +55,12 @@ def main(saved=False):
     cl.Enemylist.clear()
     cl.Collidable_list.clear()
 
-    win = False
+
+    def wincheck():
+        if not cl.Enemylist:
+            return True
+        else:
+            return False
 
 
     if saved:
@@ -104,7 +111,10 @@ def main(saved=False):
 
     back_button = cl.TxtButton(20 * SCALE, 480*SCALE, "<=", (0, 0, 0), Comfortaa_small)
 
+
+    intro_sound.play()
     while not quit:
+
         clock.tick(60)
         quit = (
             pg.event.get(pg.QUIT) or event_handler()
@@ -117,6 +127,7 @@ def main(saved=False):
         cl.displayBullets(screen)
 
         player.update(screen)  # update player
+
         cl.update_enemies(screen)#update enemies
 
         df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
@@ -125,9 +136,24 @@ def main(saved=False):
             screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
         ) or player.health == 0:
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return menu
+            return menu, ()
 
         pg.display.flip()
+
+        if wincheck():
+            df.fade_to(screen, (0, 0, 0), 0.5)
+            if level + 1 == 3:
+                raise NotImplementedError("Level 3 not implemented yet")
+            else:
+                with open ("GameData/saves.json", "w") as f:
+                    json.dump({"levelId":level+1,"score":score,"lives":player.health},f)
+                return main, (True,)
+        
+    with open ("GameData/settings.json", "r") as f:
+        data = json.load(f)
+        if data["autoSave"] == 1:
+            with open ("GameData/saves.json", "w") as f:
+                json.dump({"levelId":0,"score":0,"lives":5},f)
 
     pg.quit()
     sys.exit()
@@ -148,7 +174,8 @@ def menu():
     new_game = cl.TxtButton(175 * SCALE, 200 * SCALE, "New Game", (0, 0, 0), Comfortaa_small)
     load_game = cl.TxtButton(175 * SCALE, 250 * SCALE, "Load Game", (0, 0, 0), Comfortaa_small)
     view_highscore = cl.TxtButton(175 * SCALE, 300 * SCALE, "Highscores", (0, 0, 0), Comfortaa_small)
-    quit_game = cl.TxtButton(175 * SCALE, 350 * SCALE, "Quit", (0, 0, 0), Comfortaa_small)
+    settings_button = cl.TxtButton(175 * SCALE, 350 * SCALE, "Settings", (0, 0, 0), Comfortaa_small)
+    quit_game = cl.TxtButton(175 * SCALE, 400 * SCALE, "Quit", (0, 0, 0), Comfortaa_small)
 
     while not quit:
         clock.tick(60)
@@ -169,27 +196,68 @@ def menu():
             break
         if load_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return loadscreen
+            return main, (True,)
         if view_highscore.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return highscore
+            return highscore, ()
+        if settings_button.update(screen, mouse_pos):
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return settings, ()
         if new_game.update(screen, mouse_pos):
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return main
+            return main, (False,)
 
         pg.display.flip()
 
     pg.quit()
     sys.exit()
 #----------------------------------------------
-def loadscreen():
-    return main, (True,)
-#----------------------------------------------
 def highscore():
-    with open("Gamedata/highscores.json") as f:
-        highscore = json.load(f)
 
-    return menu
+    with open("Gamedata/highscores.json") as f:
+
+        highscore = json.load(f)
+        
+    labels = [Comfortaa_small.render(f"{i} : {highscore[i]}", True, (0,0,0)) for i in highscore]
+    label_rects = [label.get_rect(center = (175*SCALE,100*SCALE+i*50*SCALE) ) for i,label in enumerate(labels)]
+    menu_button = cl.TxtButton(175 * SCALE, 450 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small)
+
+    def event_handler():
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                return True , ()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE or event.key == pg.K_q:
+                    return True , ()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                return False , event.pos
+        return False , ()
+    
+    quit = False
+    while not quit:
+        clock.tick(60)
+        ev = event_handler()
+
+        quit = ev[0]
+        
+
+        df.draw_menu_bg(screen)  # draw background
+        mouse_pos = ev[1] if ev[1] else (0,0)
+
+        for i in range(len(labels)):
+            screen.blit(labels[i],label_rects[i])
+
+        if menu_button.update(screen, mouse_pos):
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return menu , ()
+        
+        pg.display.flip()
+
+    pg.quit()
+    sys.exit()
+
+
+    return menu , ()
 #----------------------------------------------
 def settings():
 
@@ -197,27 +265,26 @@ def settings():
 
     def event_handler():
         for event in pg.event.get():
+            if event.type == pg.QUIT:
+                return True , ()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE or event.key == pg.K_q:
-                    return True
-                elif event.key == pg.K_RETURN:
-                    return False
-
+                    return True , ()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                return False , event.pos
+        return False , ()
     music_button = cl.TxtButton(175 * SCALE, 100 * SCALE, f"Music : {current_song}", (0, 0, 0), Comfortaa_small)
     menu_button = cl.TxtButton(175 * SCALE, 150 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small)
 
 
     while not quit:
         clock.tick(60)
+        ev = event_handler()
 
-        quit = (
-            pg.event.get(pg.QUIT) or event_handler()
-        )  # quit if window is closed or event_handler returns True
+        quit =  ev[0] # quit if window is closed or event_handler returns True
 
         df.draw_menu_bg(screen)  # draw background
-        mouse_pos = (
-            pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
-        )  # get mouse position if mouse is pressed, else (0,0)
+        mouse_pos = ev[1] if ev[1] else (0,0)  # get mouse position if mouse is pressed, else (0,0)
 
         if music_button.update(screen, mouse_pos):
             #cycle through songs
@@ -237,6 +304,7 @@ def settings():
                     json.dump(settings, f)
             elif current_song == "Supert":
                 current_song = "Nothing"
+
                 with open("GameData/settings.json") as f:
                     settings = json.load(f)
                     settings["music"] = 0
@@ -244,6 +312,11 @@ def settings():
                     json.dump(settings, f)
 
             load_settings()
+            music_button.txt = f"Music : {current_song}"
+        
+        if menu_button.update(screen, mouse_pos):
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return menu, ()
             
 
 
