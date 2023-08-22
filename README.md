@@ -21,5 +21,5 @@ their advantage to complete the level. The game is currently in development and 
 - [Joseph Chacko](https://github.com/CrystallineXXII)
 
 ## Special Thanks
-- Vasudev Dinesh
-- Sooreya Narayanan MS
+- [Vasudev Dinesh](https://github.com/reveerb513)
+- [Sooreya Narayanan MS](https://github.com/kraitos100)
