@@ -2,7 +2,7 @@ import pygame as pg
 import json
 
 LEVEL_ID = 3
-IMPLEMENTED_LEVELS = [1, 2]
+IMPLEMENTED_LEVELS = [1, 2, 3]
 SCALE = 1.7
 
 COLORS = [
@@ -150,7 +150,8 @@ class Tile:
         if self.rect.collidepoint(pg.mouse.get_pos()):
             global currently_selected
             if mode == "enemy" or mode == "advanced_enemy":
-                positions.append([self.x, self.y])
+                if [self.x, self.y] not in positions:
+                    positions.append([self.x, self.y])
             elif currently_selected != None:
                 if str(currently_selected) == "O":
                     for tile in TILES:
