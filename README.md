@@ -1,4 +1,4 @@
-![Title Image](assets/images/ColdZap-Title-Card.png)
+![Title Image](assets/images/TitleCard.png)
 
 ## What is ColdZap?
 
