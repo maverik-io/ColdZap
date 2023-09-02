@@ -1,8 +1,8 @@
 import pygame as pg
 import json
 
-LEVEL_ID = 3
-IMPLEMENTED_LEVELS = [1, 2, 3]
+LEVEL_ID = 4
+IMPLEMENTED_LEVELS = [1, 2, 3, 4]
 SCALE = 1.7
 
 COLORS = [

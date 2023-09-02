@@ -144,7 +144,7 @@ def main(saved=False):
 
         if wincheck():
             df.fade_to(screen, (0, 0, 0), 0.5)
-            if level + 1 == 4:
+            if level + 1 == 5:
                 raise NotImplementedError(f"Level {level+1} not implemented yet")
             else:
                 with open("GameData/saves.json", "w") as f:
