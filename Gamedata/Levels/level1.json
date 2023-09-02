@@ -1,6 +1,6 @@
 {
     "levelId": 1,
-    "playerStartPosition": [3, 0],
+    "playerStartPosition": [3, 8],
 
     "pitPositions":[[5,5]],
     "wallPositions":[[2,3]],

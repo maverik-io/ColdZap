@@ -2,3 +2,5 @@
 .DS_Store
 .log
 replit.nix
+.vscode
+*.pyc
