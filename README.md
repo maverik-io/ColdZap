@@ -1,6 +1,6 @@
 ![Title Image](assets/images/TitleCard.png)
 
-## What is ColdZap?
+# What is ColdZap?
 
 CodeZap is a game written in `python` using the `pygame` library.
 
