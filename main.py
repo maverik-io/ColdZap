@@ -146,9 +146,10 @@ def main(saved=False):
             with open("Gamedata/saves.json", "w") as f:
                 json.dump({"levelId": 0, "score": 0, "lives": 5}, f)
 
-            with open("Gamedata/highscores.json", "a+") as f:
+            with open("Gamedata/highscores.json", "r") as f:
                 f.seek(0)
                 highscores = json.load(f)
+            with open("Gamedata/highscores.json", "w") as f:
                 if score > highscores["Current highscore"]:
                     f.seek(0)
                     json.dump({"Current highscore": score}, f)
@@ -214,7 +215,6 @@ def ded():
     pg.quit()
     sys.exit()
 
-    return menu, ()
 
 
 # ----------------------------------------------
@@ -334,7 +334,6 @@ def highscore():
     pg.quit()
     sys.exit()
 
-    return menu, ()
 
 
 # ----------------------------------------------
