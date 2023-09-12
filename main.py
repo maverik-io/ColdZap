@@ -4,10 +4,11 @@ from pygame.math import Vector2
 import json
 
 import drawing_functions as df
-import classes as cl
+import utils
 
 # ---INITIALISATION----------------------------
-SCALE = 1.7
+from utils import SCALE
+
 pg.init()
 screen = pg.display.set_mode((int(350 * SCALE), int(500 * SCALE)))
 pg.display.set_caption("ColdZap")
@@ -54,12 +55,12 @@ load_settings()
 
 # ---SCREEN-FUNCTIONS---------------------------
 def main(saved=False):
-    cl.Bulletlist.clear()
-    cl.Enemylist.clear()
-    cl.Collidable_list.clear()
+    utils.Bulletlist.clear()
+    utils.Enemylist.clear()
+    utils.Collidable_list.clear()
 
     def wincheck():
-        if not cl.Enemylist:
+        if not utils.Enemylist:
             return True
         else:
             return False
@@ -75,23 +76,26 @@ def main(saved=False):
         score = 0
         lives = 5
 
+        with open("Gamedata/saves.json", "w") as f:
+            json.dump({"levelId": level, "score": score, "lives": lives}, f)
+
     with open(f"Gamedata/Levels/Level{level}.json") as f:
         level_data = json.load(f)
     for i in level_data["enemies"]:
-        cl.Enemy(
+        utils.Enemy(
             level_data["enemies"][i]["type"],
             level_data["enemies"][i]["positions"],
         )
 
     for i in level_data["wallPositions"]:
-        cl.Wall(i)
+        utils.Wall(i)
 
     for i in level_data["pitPositions"]:
-        cl.Pit(i)
+        utils.Pit(i)
 
     startpos = level_data["playerStartPosition"]
 
-    player = cl.Player(startpos[0], startpos[1], lives)
+    player = utils.Player(startpos[0], startpos[1], lives)
     global quit
 
     def event_handler():
@@ -108,7 +112,7 @@ def main(saved=False):
                 elif event.key == pg.K_ESCAPE or event.key == pg.K_q:
                     return True
 
-    back_button = cl.TxtButton(
+    back_button = utils.TxtButton(
         20 * SCALE, 480 * SCALE, "<=", (0, 0, 0), Comfortaa_small
     )
 
@@ -121,24 +125,36 @@ def main(saved=False):
 
         df.draw_bg(screen)  # draw background
 
-        cl.update_collidables(screen)
+        utils.update_collidables(screen)
 
-        cl.displayBullets(screen)
+        utils.displayBullets(screen)
 
         player.update(screen)  # update player
 
-        cl.update_enemies(screen)  # update enemies
+        if utils.update_enemies(screen):
+            score += 10  # update enemies and add 10 to score if enemy is killed
 
         df.draw_ui(screen, Comfortaa_small, level, score, player.health)  # draw ui
 
-        if (
-            back_button.update(
-                screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
-            )
-            or player.health == 0
+        if back_button.update(
+            screen, pg.mouse.get_pos() if pg.mouse.get_pressed()[0] else (0, 0)
         ):
             df.fade_to(screen, (0, 0, 0), 0.15)
             return menu, ()
+
+        if player.health == 0:
+            with open("Gamedata/saves.json", "w") as f:
+                json.dump({"levelId": 0, "score": 0, "lives": 5}, f)
+
+            with open('Gamedata/highscores.json','a+') as f:
+                f.seek(0)
+                highscores = json.load(f)
+                if score > highscores['Current highscore']:
+                    f.seek(0)
+                    json.dump({'Current highscore': score},f)
+
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return ded, ()
 
         pg.display.flip()
 
@@ -154,14 +170,51 @@ def main(saved=False):
                     )
                 return main, (True,)
 
-    with open("GameData/settings.json", "r") as f:
-        data = json.load(f)
-        if data["autoSave"] == 1:
-            with open("GameData/saves.json", "w") as f:
-                json.dump({"levelId": 0, "score": 0, "lives": 5}, f)
+    pg.quit()
+    sys.exit()
+
+
+def ded():
+    menu_button = utils.TxtButton(
+        175 * SCALE, 450 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small
+    )
+
+    label = Comfortaa.render("You died", True, (0, 0, 0))
+    label_rect = label.get_rect(center=(175 * SCALE, 100 * SCALE))
+
+    def event_handler():
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                return True, ()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE or event.key == pg.K_q:
+                    return True, ()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                return False, event.pos
+        return False, ()
+
+    quit = False
+    while not quit:
+        clock.tick(60)
+        ev = event_handler()
+
+        quit = ev[0]
+
+        df.draw_menu_bg(screen)  # draw background
+        mouse_pos = ev[1] if ev[1] else (0, 0)
+
+        screen.blit(label, label_rect)
+
+        if menu_button.update(screen, mouse_pos):
+            df.fade_to(screen, (0, 0, 0), 0.15)
+            return menu, ()
+
+        pg.display.flip()
 
     pg.quit()
     sys.exit()
+
+    return menu, ()
 
 
 # ----------------------------------------------
@@ -176,19 +229,19 @@ def menu():
                 elif event.key == pg.K_RETURN:
                     return False
 
-    new_game = cl.TxtButton(
+    new_game = utils.TxtButton(
         175 * SCALE, 200 * SCALE, "New Game", (0, 0, 0), Comfortaa_small
     )
-    load_game = cl.TxtButton(
+    load_game = utils.TxtButton(
         175 * SCALE, 250 * SCALE, "Load Game", (0, 0, 0), Comfortaa_small
     )
-    view_highscore = cl.TxtButton(
+    view_highscore = utils.TxtButton(
         175 * SCALE, 300 * SCALE, "Highscores", (0, 0, 0), Comfortaa_small
     )
-    settings_button = cl.TxtButton(
+    settings_button = utils.TxtButton(
         175 * SCALE, 350 * SCALE, "Settings", (0, 0, 0), Comfortaa_small
     )
-    quit_game = cl.TxtButton(
+    quit_game = utils.TxtButton(
         175 * SCALE, 400 * SCALE, "Quit", (0, 0, 0), Comfortaa_small
     )
 
@@ -234,14 +287,16 @@ def highscore():
         highscore = json.load(f)
 
     labels = [
-        Comfortaa_small.render(f"{i} : {highscore[i]}", True, (0, 0, 0))
-        for i in highscore
+        Comfortaa_small.render("Current Highscore", True, (0, 0, 0)),
+        Comfortaa.render(str(highscore["Current highscore"]), True, (0, 0, 0))
     ]
+
     label_rects = [
-        label.get_rect(center=(175 * SCALE, 100 * SCALE + i * 50 * SCALE))
-        for i, label in enumerate(labels)
+        labels[0].get_rect(center=(175 * SCALE, 200 * SCALE)),
+        labels[1].get_rect(center=(175 * SCALE, 250 * SCALE))
     ]
-    menu_button = cl.TxtButton(
+
+    menu_button = utils.TxtButton(
         175 * SCALE, 450 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small
     )
 
@@ -264,6 +319,7 @@ def highscore():
         quit = ev[0]
 
         df.draw_menu_bg(screen)  # draw background
+
         mouse_pos = ev[1] if ev[1] else (0, 0)
 
         for i in range(len(labels)):
@@ -296,10 +352,10 @@ def settings():
                 return False, event.pos
         return False, ()
 
-    music_button = cl.TxtButton(
+    music_button = utils.TxtButton(
         175 * SCALE, 100 * SCALE, f"Music : {current_song}", (0, 0, 0), Comfortaa_small
     )
-    menu_button = cl.TxtButton(
+    menu_button = utils.TxtButton(
         175 * SCALE, 150 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small
     )
 

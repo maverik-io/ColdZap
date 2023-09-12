@@ -1,9 +1,7 @@
 import pygame as pg
-import drawing_functions as df
-from pygame.math import Vector2
 
 #---VARIABLES----------------------------------
-SCALE = 1.7
+from utils import SCALE
 #----------------------------------------------
 
 #---FUNCTIONS----------------------------------

@@ -3,7 +3,8 @@ import json
 
 LEVEL_ID = 4
 IMPLEMENTED_LEVELS = [1, 2, 3, 4]
-SCALE = 1.7
+
+from utils import SCALE
 
 COLORS = [
     "white",
