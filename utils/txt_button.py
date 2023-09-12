@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 class TxtButton:
     def __init__(self, x, y, txt, color, font):
         self.txt = txt
@@ -9,7 +10,6 @@ class TxtButton:
         self.clicked = False
         self.color = color
         self.font = font
-
 
     def update(self, surface, pos):
         action = False

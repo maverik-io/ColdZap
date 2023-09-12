@@ -1,21 +1,32 @@
 {
-    "levelId": 1,
-    "playerStartPosition": [3, 8],
+  "levelId": 1,
+  "playerStartPosition": [3, 8],
 
-    "pitPositions":[[5,5]],
-    "wallPositions":[[2,3]],
+  "pitPositions": [[5, 5]],
+  "wallPositions": [[2, 3]],
 
-    "enemies":
-    {
-        "enemy1":{
-            "type":"glider",
-            "positions": [[1,1],[2,1],[3,1],[4,1],[5,1]],
-            "speed":1
-        },
-        "enemy2":{
-            "type":"glider",
-            "positions": [[1,4],[2,4],[3,4],[4,4],[5,4]],
-            "speed":1
-        }
+  "enemies": {
+    "enemy1": {
+      "type": "glider",
+      "positions": [
+        [1, 1],
+        [2, 1],
+        [3, 1],
+        [4, 1],
+        [5, 1]
+      ],
+      "speed": 1
+    },
+    "enemy2": {
+      "type": "glider",
+      "positions": [
+        [1, 4],
+        [2, 4],
+        [3, 4],
+        [4, 4],
+        [5, 4]
+      ],
+      "speed": 1
     }
+  }
 }

@@ -146,12 +146,12 @@ def main(saved=False):
             with open("Gamedata/saves.json", "w") as f:
                 json.dump({"levelId": 0, "score": 0, "lives": 5}, f)
 
-            with open('Gamedata/highscores.json','a+') as f:
+            with open("Gamedata/highscores.json", "a+") as f:
                 f.seek(0)
                 highscores = json.load(f)
-                if score > highscores['Current highscore']:
+                if score > highscores["Current highscore"]:
                     f.seek(0)
-                    json.dump({'Current highscore': score},f)
+                    json.dump({"Current highscore": score}, f)
 
             df.fade_to(screen, (0, 0, 0), 0.15)
             return ded, ()
@@ -288,12 +288,12 @@ def highscore():
 
     labels = [
         Comfortaa_small.render("Current Highscore", True, (0, 0, 0)),
-        Comfortaa.render(str(highscore["Current highscore"]), True, (0, 0, 0))
+        Comfortaa.render(str(highscore["Current highscore"]), True, (0, 0, 0)),
     ]
 
     label_rects = [
         labels[0].get_rect(center=(175 * SCALE, 200 * SCALE)),
-        labels[1].get_rect(center=(175 * SCALE, 250 * SCALE))
+        labels[1].get_rect(center=(175 * SCALE, 250 * SCALE)),
     ]
 
     menu_button = utils.TxtButton(

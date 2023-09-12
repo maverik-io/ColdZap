@@ -9,7 +9,9 @@ the keys to unlock the door to the next level. The player must avoid the enemies
 their advantage to complete the level. The game is currently in development and is not yet complete.
 
 ---
+
 ---
+
 # How to Play
 
 ## Movement
@@ -17,20 +19,21 @@ their advantage to complete the level. The game is currently in development and 
 - The player can move using the `WASD` keys. The player can also use the arrow keys to move.
 
 ## Shooting
-- Shooting is automatic.  
 
+- Shooting is automatic.
 
 ## Saving
+
 - The game saves automatically when the player completes a level.
 
 ## Levels
+
 - The game has 4 levels currently.
 - The game is not yet complete and more levels will be added in the future :).
 
 ---
+
 ---
-
-
 
 # Credits
 
@@ -54,4 +57,3 @@ their advantage to complete the level. The game is currently in development and 
 
 - [Vasudev Dinesh](https://github.com/reveerb513) (Debuggig and testing)
 - [Sooreya Narayanan MS](https://github.com/kraitos100) (Playtesting)
-

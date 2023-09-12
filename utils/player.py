@@ -8,11 +8,13 @@ PlayerPos = Vector2(3, 8)
 
 
 class Player:
-    def __init__(self, x=3, y=8,health=5):
+    def __init__(self, x=3, y=8, health=5):
         global PlayerPos
         self.image = pg.image.load(f"assets/images/{SCALE}x/player.png")
         self.pos = Vector2(x, y)
-        self.rect = self.image.get_rect(center=self.pos * 50*SCALE + Vector2(25, 25)*SCALE)
+        self.rect = self.image.get_rect(
+            center=self.pos * 50 * SCALE + Vector2(25, 25) * SCALE
+        )
         self.moving = False
         self.vel = Vector2(0, 0)
         self.target = self.pos
@@ -25,15 +27,15 @@ class Player:
     def move(self, direction):
         match direction:
             case "up":
-                self.targets.append( Vector2(0, -1))
+                self.targets.append(Vector2(0, -1))
             case "down":
-                self.targets.append( Vector2(0, 1))
+                self.targets.append(Vector2(0, 1))
             case "left":
-                self.targets.append( Vector2(-1, 0))
+                self.targets.append(Vector2(-1, 0))
             case "right":
-                self.targets.append( Vector2(1, 0))
+                self.targets.append(Vector2(1, 0))
 
-    def wallcheck(self, direction, pos= None):
+    def wallcheck(self, direction, pos=None):
         if pos == None:
             pos = self.pos
 
@@ -41,7 +43,7 @@ class Player:
             if i.pos == pos + direction:
                 return False
         return True
-        
+
     def update(self, surface):
         global PlayerPos
 
@@ -54,27 +56,34 @@ class Player:
             if len(self.targets) != 0:
                 direction = self.targets.pop(0)
                 target = self.pos + direction
-                if -1 < target.x < 7 and -1 < target.y < 9 and self.wallcheck(direction):
+                if (
+                    -1 < target.x < 7
+                    and -1 < target.y < 9
+                    and self.wallcheck(direction)
+                ):
                     self.target = target
                     self.moving = True
             self.tgt = self.pos
         PlayerPos = self.pos
-        self.rect.center = self.pos * 50*SCALE + Vector2(25, 25)*SCALE
+        self.rect.center = self.pos * 50 * SCALE + Vector2(25, 25) * SCALE
 
         self.collision()
         self.shoot_stuff()
 
         surface.blit(self.image, self.rect)
 
-
-
     def shoot_stuff(self):
         try:
             if self.counter > 10:
                 for enemy in utils.Enemylist:
-
-                    if (self.pos.x == enemy.tgt.x or self.pos.y == enemy.tgt.y):
-                        utils.Bulletlist.append(utils.Bullet(self.pos, (enemy.tgt - self.pos).normalize() * 20, "blue"))
+                    if self.pos.x == enemy.tgt.x or self.pos.y == enemy.tgt.y:
+                        utils.Bulletlist.append(
+                            utils.Bullet(
+                                self.pos,
+                                (enemy.tgt - self.pos).normalize() * 20,
+                                "blue",
+                            )
+                        )
                         self.counter = 0
             self.counter += 1
         except:
@@ -83,7 +92,13 @@ class Player:
     def collision(self):
         for i in utils.Bulletlist:
             if i.type == "red":
-                if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*SCALE), int(i.pos.y - self.pos.y * 50*SCALE))):
+                if self.mask.overlap(
+                    i.mask,
+                    (
+                        int(i.pos.x - self.pos.x * 50 * SCALE),
+                        int(i.pos.y - self.pos.y * 50 * SCALE),
+                    ),
+                ):
                     self.hit = True
                     utils.Bulletlist.remove(i)
                     self.health -= 1

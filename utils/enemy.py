@@ -2,13 +2,18 @@ import pygame as pg
 from pygame.math import Vector2
 from utils import Bulletlist, SCALE
 
-from .bullet import Bullet 
+from .bullet import Bullet
 from . import player
 
 Enemylist = []
 
+
 class Enemy:
-    def __init__(self, type: str, positions: list[list[int, int]], ):
+    def __init__(
+        self,
+        type: str,
+        positions: list[list[int, int]],
+    ):
         self.type = type
         self.positions = positions + positions[::-1]
 
@@ -29,7 +34,9 @@ class Enemy:
     def update(self, surface):
         if self.counter > 120:
             self.counter = 0
-            Bulletlist.append(Bullet(self.pos, (player.PlayerPos - self.pos).normalize() * 2))
+            Bulletlist.append(
+                Bullet(self.pos, (player.PlayerPos - self.pos).normalize() * 2)
+            )
 
         self.counter += 1
 
@@ -38,9 +45,9 @@ class Enemy:
             self.positions.append(self.positions.pop(0))
             self.tgt = Vector2(self.positions[0])
         self.pos = self.pos + (self.tgt - self.pos) * 0.1
-        self.rect.center = self.pos * 50*SCALE + Vector2(25, 25)*SCALE
+        self.rect.center = self.pos * 50 * SCALE + Vector2(25, 25) * SCALE
         surface.blit(self.image, self.rect)
-        
+
         self.collision()
         if self.health <= 0:
             try:
@@ -52,6 +59,12 @@ class Enemy:
     def collision(self):
         for i in Bulletlist:
             if i.type == "blue":
-                if self.mask.overlap(i.mask, (int(i.pos.x- self.pos.x * 50*SCALE), int(i.pos.y - self.pos.y * 50*SCALE))):
+                if self.mask.overlap(
+                    i.mask,
+                    (
+                        int(i.pos.x - self.pos.x * 50 * SCALE),
+                        int(i.pos.y - self.pos.y * 50 * SCALE),
+                    ),
+                ):
                     Bulletlist.remove(i)
                     self.health -= 1
