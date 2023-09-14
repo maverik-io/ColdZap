@@ -6,8 +6,22 @@ SCALE = utils.SCALE
 
 PlayerPos = Vector2(3, 8)
 
+"""
+This file contains the player class.
+"""
+
 
 class Player:
+
+    """
+    INITALIZE THE PLAYER
+    Syntax: Player(x, y, health)
+
+    :param x: x position of the player
+    :param y: y position of the player
+    :param health: health of the player
+    """
+
     def __init__(self, x=3, y=8, health=5):
         global PlayerPos
         self.image = pg.image.load(f"assets/images/{SCALE}x/player.png")
@@ -35,7 +49,7 @@ class Player:
             case "right":
                 self.targets.append(Vector2(1, 0))
 
-    def wallcheck(self, direction, pos=None):
+    def is_walkable(self, direction, pos=None):
         if pos == None:
             pos = self.pos
 
@@ -59,7 +73,7 @@ class Player:
                 if (
                     -1 < target.x < 7
                     and -1 < target.y < 9
-                    and self.wallcheck(direction)
+                    and self.is_walkable(direction)
                 ):
                     self.target = target
                     self.moving = True

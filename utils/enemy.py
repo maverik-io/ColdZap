@@ -7,8 +7,19 @@ from . import player
 
 Enemylist = []
 
+"""
+Contains all the enemy classes in the game.
+"""
+
 
 class Enemy:
+    """
+    Class for the enemies in the game.
+
+    :param type: The type of the enemy.
+    :param positions: The positions of the enemy.
+    """
+
     def __init__(
         self,
         type: str,

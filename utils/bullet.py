@@ -4,8 +4,20 @@ from utils import SCALE
 
 Bulletlist = []
 
+"""
+This file contains the bullet class.
+"""
+
 
 class Bullet:
+    """
+    Class for the bullets in the game.
+
+    :param pos: The position of the bullet.
+    :param vel: The velocity of the bullet. Vector stores both direction and speed.
+    :param type: The type of the bullet.
+    """
+
     def __init__(self, pos, vel, type="red"):
         self.type = type
         self.image = pg.image.load(f"assets/images/{SCALE}x/{type}-bullet.png")

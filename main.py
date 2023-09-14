@@ -24,7 +24,7 @@ Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", int(20 * SCALE))
 music_playing = False
 current_song = "Nothing"
 
-intro_sound = pg.mixer.Sound("assets/audio/intro.wav")
+intro_sound = pg.mixer.Sound("assets/audio/Astra.mp3")
 
 
 # ---FUNCTIONS----------------------------------
@@ -39,7 +39,7 @@ def load_settings():
         elif settings["music"] == 1:
             music_playing = True
             current_song = "Astra"
-            pg.mixer.music.load("assets/audio/menu.wav")
+            pg.mixer.music.load("assets/audio/Astra.mp3")
         elif settings["music"] == 2:
             music_playing = True
             current_song = "Supert"
@@ -155,7 +155,7 @@ def main(saved=False):
                     json.dump({"Current highscore": score}, f)
 
             df.fade_to(screen, (0, 0, 0), 0.15)
-            return ded, ()
+            return you_died, ()
 
         pg.display.flip()
 
@@ -175,7 +175,7 @@ def main(saved=False):
     sys.exit()
 
 
-def ded():
+def you_died():
     menu_button = utils.TxtButton(
         175 * SCALE, 450 * SCALE, "Back to menu", (0, 0, 0), Comfortaa_small
     )
@@ -214,7 +214,6 @@ def ded():
 
     pg.quit()
     sys.exit()
-
 
 
 # ----------------------------------------------
@@ -333,7 +332,6 @@ def highscore():
 
     pg.quit()
     sys.exit()
-
 
 
 # ----------------------------------------------

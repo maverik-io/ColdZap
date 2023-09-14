@@ -2,10 +2,10 @@
 
 # What is ColdZap?
 
-CodeZap is a game written in `python` using the `pygame` library.
+ColdZap is a game written in `python` using the `pygame` library.
 
-The game is a dungeon explorer style game where the player must navigate through a dungeon and collect all
-the keys to unlock the door to the next level. The player must avoid the enemies and use the environment to
+The game is a dungeon explorer style game where the player must navigate through a level and kill all
+the enemies to access the next level. The player must use the environment to
 their advantage to complete the level. The game is currently in development and is not yet complete.
 
 ---
@@ -16,15 +16,16 @@ their advantage to complete the level. The game is currently in development and 
 
 ## Movement
 
-- The player can move using the `WASD` keys. The player can also use the arrow keys to move.
+- The player can move using the `W` `A` `S` `D` keys. The player can also use the arrow keys to move.
 
 ## Shooting
 
-- Shooting is automatic.
+- Shooting is automatic. Simply get in line with an enemy and the player will shoot automatically.
 
 ## Saving
 
 - The game saves automatically when the player completes a level.
+- Beware, the game will reset when the player dies.
 
 ## Levels
 
@@ -55,5 +56,35 @@ their advantage to complete the level. The game is currently in development and 
 
 ## Special Thanks
 
-- [Vasudev Dinesh](https://github.com/reveerb513) (Debuggig and testing)
+- [Vasudev Dinesh](https://github.com/reveerb513) (Debugging and testing)
 - [Sooreya Narayanan MS](https://github.com/kraitos100) (Playtesting)
+
+---
+
+---
+
+# Software
+
+## Game
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Pygame](https://www.pygame.org/news)
+- [Python](https://www.python.org/)
+- [GitHub](https.//github.com)
+
+## Assets
+
+- [Soundtrap](https://www.soundtrap.com/) (Music)
+- [Illustrator](https://www.adobe.com/in/products/illustrator.html) (Image Assets)
+
+---
+
+---
+
+# Source Code
+
+`access the repo here:` [`ColdZap`](https://crystallinexxii.github.io/ColdZap)
+
+---
+
+---

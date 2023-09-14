@@ -9,8 +9,7 @@ from .txt_button import TxtButton
 from .bullet import Bulletlist, Bullet
 from .enemy import Enemylist, Enemy
 from .player import Player
-from .wall import Wall
-from .pit import Pit
+from .blocks import Wall, Pit
 
 
 # ----------------------------------------------

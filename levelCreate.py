@@ -1,8 +1,12 @@
 import pygame as pg
 import json
 
-LEVEL_ID = 4
-IMPLEMENTED_LEVELS = [1, 2, 3, 4]
+"""
+A simple utility to create levels for the game.
+"""
+
+LEVEL_ID = 4  # Change this to the level you want to edit
+IMPLEMENTED_LEVELS = [1, 2, 3, 4]  # Add the levels you have implemented here
 
 from utils import SCALE
 
@@ -119,6 +123,10 @@ class GoalTile:
 
 
 class AdvancedEnemyTile:
+    """
+    This class is not used in the game, but it is here for future use.
+    """
+
     def __init__(self, x, y, positions):
         self.x = x
         self.y = y
@@ -126,6 +134,10 @@ class AdvancedEnemyTile:
 
 
 class Tile:
+    """
+    A tile is a single square on the level editor.
+    """
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -168,6 +180,11 @@ class Tile:
 
 
 class TileSelector:
+    """
+    A tile selector is a single square on the right side of the level editor.
+    It is used to select a tile to place.
+    """
+
     def __init__(self, x, y, txt):
         self.x = x
         self.y = y
@@ -221,7 +238,7 @@ REFERENCES = {
     "P": PitTile,
     "O": PlayerTile,
     "E": EnemyTile,
-    "AE": AdvancedEnemyTile,
+    "AE": AdvancedEnemyTile,  # This is not used in the game, but it is here for future use.
     "G": GoalTile,
 }
 TILES = (
