@@ -1,1 +1,5 @@
-{ "levelId": 0, "score": 0, "lives": 5 }
+{
+    "levelId": 0,
+    "score": 0,
+    "lives": 5
+}

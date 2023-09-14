@@ -16,7 +16,7 @@ class Wall:
 
     def __init__(self, pos):
         x, y = pos
-        self.image = pg.image.load(f"assets/images/{SCALE}x/wall.png")
+        self.image = pg.image.load(f"assets/images/{SCALE}x/wall2.png")
         self.pos = Vector2(x, y)
         self.rect = self.image.get_rect(
             center=self.pos * 50 * SCALE + Vector2(25, 25) * SCALE
@@ -47,7 +47,7 @@ class Pit:
 
     def __init__(self, pos):
         x, y = pos
-        self.image = pg.image.load(f"assets/images/{SCALE}x/pit.png")
+        self.image = pg.image.load(f"assets/images/{SCALE}x/pit2.png")
         self.pos = Vector2(x, y)
         self.rect = self.image.get_rect(
             center=self.pos * 50 * SCALE + Vector2(25, 25) * SCALE

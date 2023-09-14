@@ -77,7 +77,7 @@ def main(saved=False):
         lives = 5
 
         with open("Gamedata/saves.json", "w") as f:
-            json.dump({"levelId": level, "score": score, "lives": lives}, f)
+            json.dump({"levelId": level, "score": score, "lives": lives}, f,indent=4)
 
     with open(f"Gamedata/Levels/Level{level}.json") as f:
         level_data = json.load(f)
@@ -144,15 +144,7 @@ def main(saved=False):
 
         if player.health == 0:
             with open("Gamedata/saves.json", "w") as f:
-                json.dump({"levelId": 0, "score": 0, "lives": 5}, f)
-
-            with open("Gamedata/highscores.json", "r") as f:
-                f.seek(0)
-                highscores = json.load(f)
-            with open("Gamedata/highscores.json", "w") as f:
-                if score > highscores["Current highscore"]:
-                    f.seek(0)
-                    json.dump({"Current highscore": score}, f)
+                json.dump({"levelId": 0, "score": 0, "lives": 5}, f,indent=4)
 
             df.fade_to(screen, (0, 0, 0), 0.15)
             return you_died, ()
@@ -165,10 +157,18 @@ def main(saved=False):
                 raise NotImplementedError(f"Level {level+1} not implemented yet")
             else:
                 with open("GameData/saves.json", "w") as f:
+                    print(level + 1)
                     json.dump(
                         {"levelId": level + 1, "score": score, "lives": player.health},
                         f,
+                        indent=4
                     )
+            with open("Gamedata/highscores.json", "r") as f:
+                highscores = json.load(f)
+            with open("Gamedata/highscores.json", "w") as f:
+                if score > int(highscores["highscore"]):
+                    json.dump({"highscore": str(score)}, f,indent=4)
+
                 return main, (True,)
 
     pg.quit()
@@ -287,7 +287,7 @@ def highscore():
 
     labels = [
         Comfortaa_small.render("Current Highscore", True, (0, 0, 0)),
-        Comfortaa.render(str(highscore["Current highscore"]), True, (0, 0, 0)),
+        Comfortaa.render(str(highscore["highscore"]), True, (0, 0, 0)),
     ]
 
     label_rects = [
@@ -375,14 +375,14 @@ def settings():
                     settings = json.load(f)
                     settings["music"] = 1
                 with open("GameData/settings.json", "w") as f:
-                    json.dump(settings, f)
+                    json.dump(settings, f,indent=4)
             elif current_song == "Astra":
                 current_song = "Supert"
                 with open("GameData/settings.json") as f:
                     settings = json.load(f)
                     settings["music"] = 2
                 with open("GameData/settings.json", "w") as f:
-                    json.dump(settings, f)
+                    json.dump(settings, f,indent=4)
             elif current_song == "Supert":
                 current_song = "Nothing"
 
@@ -390,7 +390,7 @@ def settings():
                     settings = json.load(f)
                     settings["music"] = 0
                 with open("GameData/settings.json", "w") as f:
-                    json.dump(settings, f)
+                    json.dump(settings, f,indent=4)
 
             load_settings()
             music_button.txt = f"Music : {current_song}"
