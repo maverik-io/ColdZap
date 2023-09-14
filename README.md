@@ -83,7 +83,7 @@ their advantage to complete the level. The game is currently in development and 
 
 # Source Code
 
-`access the repo here:` [`ColdZap`](https://crystallinexxii.github.io/ColdZap)
+`access the repo here:` [`ColdZap`](https://github.com/CrystallineXXII/ColdZap)
 
 ---
 
