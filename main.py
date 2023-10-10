@@ -24,7 +24,7 @@ Comfortaa_small = pg.font.Font("assets/fonts/Comfortaa.ttf", int(20 * SCALE))
 music_playing = False
 current_song = "Nothing"
 
-intro_sound = pg.mixer.Sound("assets/audio/Astra.mp3")
+intro_sound = pg.mixer.Sound("assets/audio/Level-Intro.wav")
 
 
 # ---FUNCTIONS----------------------------------
@@ -39,7 +39,7 @@ def load_settings():
         elif settings["music"] == 1:
             music_playing = True
             current_song = "Astra"
-            pg.mixer.music.load("assets/audio/Astra.mp3")
+            pg.mixer.music.load("assets/audio/Level.mp3")
         elif settings["music"] == 2:
             music_playing = True
             current_song = "Supert"
@@ -115,8 +115,10 @@ def main(saved=False):
     back_button = utils.TxtButton(
         20 * SCALE, 480 * SCALE, "<=", (0, 0, 0), Comfortaa_small
     )
-
+    pg.mixer.music.stop()
     intro_sound.play()
+    pg.mixer.music.load("assets/audio/Level-Theme.wav")
+    pg.mixer.music.play(-1)
     while not quit:
         clock.tick(60)
         quit = (
@@ -146,6 +148,12 @@ def main(saved=False):
             with open("Gamedata/saves.json", "w") as f:
                 json.dump({"levelId": 0, "score": 0, "lives": 5}, f,indent=4)
 
+            with open("Gamedata/highscores.json", "r") as f:
+                highscores = json.load(f)
+            if score > int(highscores["highscore"]):
+                with open("Gamedata/highscores.json", "w") as f:
+                    json.dump({"highscore": str(score)}, f,indent=4)
+
             df.fade_to(screen, (0, 0, 0), 0.15)
             return you_died, ()
 
@@ -165,11 +173,11 @@ def main(saved=False):
                     )
             with open("Gamedata/highscores.json", "r") as f:
                 highscores = json.load(f)
-            with open("Gamedata/highscores.json", "w") as f:
-                if score > int(highscores["highscore"]):
+            if score > int(highscores["highscore"]):
+                with open("Gamedata/highscores.json", "w") as f:
                     json.dump({"highscore": str(score)}, f,indent=4)
 
-                return main, (True,)
+            return main, (True,)
 
     pg.quit()
     sys.exit()
