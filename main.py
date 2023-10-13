@@ -39,7 +39,7 @@ def load_settings():
         elif settings["music"] == 1:
             music_playing = True
             current_song = "Astra"
-            pg.mixer.music.load("assets/audio/Level.mp3")
+            pg.mixer.music.load("assets/audio/Astra.mp3")
         elif settings["music"] == 2:
             music_playing = True
             current_song = "Supert"
@@ -228,6 +228,7 @@ def you_died():
 def menu():
     global quit
 
+    load_settings()
     def event_handler():
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
