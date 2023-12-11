@@ -70,7 +70,7 @@ their advantage to complete the level. The game is currently in development and 
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Pygame](https://www.pygame.org/news)
 - [Python](https://www.python.org/)
-- [GitHub](https.//github.com)
+- [GitHub](https://github.com/)
 
 ## Assets
 
